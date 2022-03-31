@@ -89,7 +89,7 @@ class Solver:
             if len(self.tableCandi[i][j])==0: return False
             for cand in self.tableCandi[i][j]:
                 self.table[i][j]=cand
-                if self.check(i,j,cand) or len(self.tableCandi[i][j])==1:
+                if  len(self.tableCandi[i][j])==1 or self.check(i,j,cand):
                     if func:func(i,j)
                     memo,valid=self.remove(i,j,cand)
                     if valid:

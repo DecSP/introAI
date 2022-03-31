@@ -1,5 +1,7 @@
 from sudoku import Solver,Solver2
 from GUI import Visualizer,getChar
+import os, psutil;
+
 import time
 print("Select input: ", end='')
 ip = input()
@@ -43,7 +45,8 @@ else:
 ncount=0
 if demo:
     vs=Visualizer(sudoku,grid)
-    print('Press Enter to begin')
+    print('Press Space to go next step')
+    print('Press Enter to auto next step')
     vs.run()
 else:
     print('Solving...')
@@ -62,6 +65,7 @@ else:
     else:
         print('Can\'t solve this game :((')
         
-    print("Time run:", tr)
-    print("Node count:", ncount)
+    print("Time run:", tr,'seconds')
+    print("Memory:",psutil.Process(os.getpid()).memory_info().rss,'bytes')
+    print("Nodes count:", ncount)
 
