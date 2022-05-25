@@ -11,10 +11,7 @@ from svglib.svglib import svg2rlg
 import io
 
 import AI
-# from chess_engine import ai_play_turn
 from threading import Thread
-import threading
-lock=threading.Lock()
 
 pygame.init()  # essential for pygame
 pygame.font.init()  # for text
@@ -105,7 +102,6 @@ def run_game():
     isfinish = False
 
     while not board.is_checkmate() and not isfinish:
-
         if player == 1:
             if len(list(board.legal_moves)) == 0:
                 update_sidemenu('You have no legal move!\nCPU Win!\nPress any key to quit.', (255, 255, 0))
@@ -115,7 +111,15 @@ def run_game():
                 continue
 
             if mode == 1:
-                move = random.choice(list(board.legal_moves))
+                thread=Thread(target=AI.minimaxroot2,args=(3, board, True, not goFirst,))
+                AI.bestMove=None
+                thread.start()
+                while True:
+                    if AI.bestMove is not None: break
+                    pygame.event.get()
+                    clock.tick(60)
+                # move = random.choice(list(board.legal_moves))
+                move = AI.bestMove
                 board.push(move)
                 if board.is_checkmate():
                     update_sidemenu('Checkmate!\nYou Win!\nPress any key to quit.', (255, 255, 0))
@@ -174,14 +178,11 @@ def run_game():
                 isfinish = True
                 continue
             
-            thread=Thread(target=AI.minimaxroot,args=(difficult, board, True, goFirst,lock,))
+            thread=Thread(target=AI.minimaxroot,args=(difficult, board, True, goFirst,))
             AI.bestMove=None
             thread.start()
             while True:
-                lock.acquire()
-                tmp=AI.bestMove
-                lock.release()
-                if tmp is not None: break
+                if AI.bestMove is not None: break
                 pygame.event.get()
                 clock.tick(60)
             
