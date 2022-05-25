@@ -102,7 +102,11 @@ def run_game():
     isfinish = False
 
     while not board.is_checkmate() and not isfinish:
-        if player == 1:
+        if board.can_claim_draw():
+            update_sidemenu('The game ends!\nDraw!\nPress any key to quit.', (255, 255, 0))
+            update = True
+            isfinish = True
+        elif player == 1:
             if len(list(board.legal_moves)) == 0:
                 update_sidemenu('You have no legal move!\nCPU Win!\nPress any key to quit.', (255, 255, 0))
                 player = 'AI'
@@ -118,8 +122,8 @@ def run_game():
                     if AI.bestMove is not None: break
                     pygame.event.get()
                     clock.tick(60)
-                # move = random.choice(list(board.legal_moves))
-                move = AI.bestMove
+                move2 = random.choice(list(board.legal_moves))
+                move = AI.bestMove if random.randint(1,5)!=1 else move2
                 board.push(move)
                 if board.is_checkmate():
                     update_sidemenu('Checkmate!\nYou Win!\nPress any key to quit.', (255, 255, 0))

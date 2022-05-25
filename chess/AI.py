@@ -170,9 +170,9 @@ def predict_DF(df,model):
 
 def evalBoardML(board,droprate=0.5,x=100):
     global model
-    if model is None:
-        return board.legal_moves
     data,moves = get_possible_moves_data(board)
+    if model is None or data.shape[0]==0:
+        return board.legal_moves
     predictions = predict_DF(data,model)
     rmoves=[moves[pred[0]] for pred in predictions[max(int((len(moves)-1)*(1-droprate)),len(moves)-x):]][::-1]
     return rmoves
@@ -194,7 +194,10 @@ def minimaxroot(depth, board, maximizing, first):
     origdepth=depth
     bestValue = -9999
     Move = None
-    for move in evalBoardML(board):
+    tmp=evalBoardML(board)
+    if len(tmp)>10: depth=3
+    else: depth=5
+    for move in tmp:
         board.push(move)
         value = minimax(depth-1, board, -10000, 10000, not maximizing, first)
         board.pop()
@@ -254,7 +257,7 @@ def minimaxroot2(depth, board, maximizing, first):
 
 def minimax2(depth, board, alpha, beta, maximizing, first):
     if depth == 0:
-        return -evaluateBoard(board, first)+random.randint(-100,100)
+        return -evaluateBoard(board, first)
     if maximizing:
         bestValue = -9999
 
